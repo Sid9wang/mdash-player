@@ -18,8 +18,8 @@ export default class MediaHandler {
     this.audio_dom = $('<audio>');
     this.video_dom.append(this.audio_dom);
 
-    this.video = new MediaLoader(this.config, this.video_dom);
-    this.audio = new MediaLoader(this.config, this.audio_dom);
+    this.video = new MediaLoader(this.config, this.video_dom, 0);
+    this.audio = new MediaLoader(this.config, this.audio_dom, 0);
 
     this.audio_dom.get(0).currentTime = 0;
     this.video_dom.get(0).currentTime = 0;
@@ -46,6 +46,11 @@ export default class MediaHandler {
     } else {
       this.audio_dom.get(0).muted = true;
     }
+  }
+
+  changeVideoQuality(index) {
+    this.video = new MediaLoader(this.config, this.video_dom, index);
+    this.audio_dom.get(0).currentTime = 0;
   }
 
 }

@@ -4,7 +4,7 @@ import MediaHandler from './MediaHandler';
 
 export default class mdash {
 
-  constructor(url, selector) {
+  constructor(url, selector, callback) {
     this.url = url;
     this.selector = selector;
 
@@ -12,6 +12,9 @@ export default class mdash {
       this.config = new Parser(this.url, data);
       console.log('MPD Loaded');
       this.init();
+      if (callback) {
+        callback();
+      }
     };
 
     $.ajax({
@@ -30,6 +33,17 @@ export default class mdash {
 
   toggleVolume() {
     this.mediaHandler.toggleVolume();
+  }
+
+  changeVideoQuality(index) {
+    const vm = this;
+    return function() {
+      vm.mediaHandler.changeVideoQuality(index);
+    };
+  }
+
+  getVideoRep() {
+    return this.config.getRepresentation('video');
   }
 
 }

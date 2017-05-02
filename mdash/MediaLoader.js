@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 export default class MediaLoader {
 
-  constructor(config, dom) {
+  constructor(config, dom, rep) {
     this.type = dom.prop('nodeName').toLowerCase();
 
     this.config = config;
@@ -12,7 +12,7 @@ export default class MediaLoader {
     this.reps = config.getRepresentation(this.type);
     this.template = config.getTemplate(this.type);
 
-    this.current_rep = 0;
+    this.current_rep = rep;
     this.buffer_queue = [];
     this.total_byte = 0;
 
