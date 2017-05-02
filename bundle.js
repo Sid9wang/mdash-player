@@ -63,30 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(function () {
-  (0, _jquery2.default)('#url_btn').on('click', function () {
-    var url = (0, _jquery2.default)('#url').val();
-  });
-})();
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10346,10 +10327,486 @@ return jQuery;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _mdash = __webpack_require__(5);
+
+var _mdash2 = _interopRequireDefault(_mdash);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _jquery2.default)('#url_btn').on('click', function () {
+  var url = (0, _jquery2.default)('#url').val();
+  var player = new _mdash2.default(url, '#video', function () {
+    var reps = player.getVideoRep();
+    (0, _jquery2.default)('#quality').empty();
+    reps.forEach(function (x, i) {
+      var temp = (0, _jquery2.default)('<li>' + x.id + '</li>');
+      temp.on('click', player.changeVideoQuality(i));
+      (0, _jquery2.default)('#quality').append(temp);
+    });
+    (0, _jquery2.default)('#mute_btn').on('click', function () {
+      player.toggleVolume();
+    });
+  });
+});
+
+// $('#url_btn2').on('click', function() {
+//   const url = $('#url2').val();
+//   new mdash(url, '#video');
+// });
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(0);
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _MediaLoader = __webpack_require__(3);
+
+var _MediaLoader2 = _interopRequireDefault(_MediaLoader);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MediaHandler = function () {
+  function MediaHandler(config, selector) {
+    _classCallCheck(this, MediaHandler);
+
+    this.config = config;
+
+    this.video_dom = (0, _jquery2.default)(selector);
+    this.video_dom.attr('src', '');
+    var check_audio = this.video_dom.find('audio');
+    if (check_audio.length > 0) {
+      check_audio.attr('src', '');
+      check_audio.remove();
+      this.video_dom.empty();
+    }
+
+    this.audio_dom = (0, _jquery2.default)('<audio>');
+    this.video_dom.append(this.audio_dom);
+
+    this.video = new _MediaLoader2.default(this.config, this.video_dom, 0);
+    this.audio = new _MediaLoader2.default(this.config, this.audio_dom, 0);
+
+    this.audio_dom.get(0).currentTime = 0;
+    this.video_dom.get(0).currentTime = 0;
+
+    var pause_audio = function pause_audio() {
+      this.audio_dom.get(0).pause();
+    };
+    var play_audio = function play_audio() {
+      this.audio_dom.get(0).play();
+    };
+    var sync_av = function sync_av() {
+      this.audio_dom.get(0).currentTime = this.video_dom.get(0).currentTime;
+    };
+
+    this.video_dom.on('pause', pause_audio.bind(this));
+    this.video_dom.on('play', play_audio.bind(this));
+    this.video_dom.on('seeked', sync_av.bind(this));
+  }
+
+  _createClass(MediaHandler, [{
+    key: 'toggleVolume',
+    value: function toggleVolume() {
+      if (this.audio_dom.get(0).muted) {
+        this.audio_dom.get(0).muted = false;
+      } else {
+        this.audio_dom.get(0).muted = true;
+      }
+    }
+  }, {
+    key: 'changeVideoQuality',
+    value: function changeVideoQuality(index) {
+      this.video = new _MediaLoader2.default(this.config, this.video_dom, index);
+      this.audio_dom.get(0).currentTime = 0;
+    }
+  }]);
+
+  return MediaHandler;
+}();
+
+exports.default = MediaHandler;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MediaLoader = function () {
+  function MediaLoader(config, dom, rep) {
+    _classCallCheck(this, MediaLoader);
+
+    this.type = dom.prop('nodeName').toLowerCase();
+
+    this.config = config;
+    this.dom = dom;
+
+    this.mime = config.getMime(this.type);
+    this.reps = config.getRepresentation(this.type);
+    this.template = config.getTemplate(this.type);
+
+    this.current_rep = rep;
+    this.buffer_queue = [];
+    this.total_byte = 0;
+
+    this.mediaSource = new window.MediaSource();
+    this.dom.attr('src', window.URL.createObjectURL(this.mediaSource));
+    (0, _jquery2.default)(this.mediaSource).on('sourceopen', this.start.bind(this));
+  }
+
+  _createClass(MediaLoader, [{
+    key: 'start',
+    value: function start() {
+      this.sourceBuffer = this.mediaSource.addSourceBuffer(this.getMime());
+      console.log(this.type + ' source buffer initialized');
+      var callback = function callback(data) {
+        // console.log(data.byteLength);
+        // append init buffer
+        this.sourceBuffer.appendBuffer(data);
+        // load more data
+        this.loadMore();
+        this.dom.get(0).play();
+      };
+      this.ajaxBuffer(callback.bind(this));
+    }
+  }, {
+    key: 'loadMore',
+    value: function loadMore() {
+      var callback = function callback(data) {
+        // console.log(data.byteLength);
+        this.total_byte += data.byteLength;
+        this.buffer_queue.push(data);
+        this.loadFromQueue();
+        if (this.shouldSleep()) {
+          // stop loading, set timeupdate checker
+        } else {
+          // continue loading data
+          this.loadMore();
+        }
+      };
+      this.ajaxBuffer(callback.bind(this));
+    }
+  }, {
+    key: 'loadFromQueue',
+    value: function loadFromQueue() {
+      if (!this.sourceBuffer.updating) {
+        var data = this.buffer_queue.shift();
+        if (data) {
+          this.sourceBuffer.appendBuffer(data);
+          (0, _jquery2.default)(this.sourceBuffer).one('updateend', this.loadFromQueue.bind(this));
+        }
+      }
+    }
+  }, {
+    key: 'shouldSleep',
+    value: function shouldSleep() {
+      var sec = this.total_byte * 8 / this.reps[this.current_rep].bitrate;
+      // console.log(this.total_byte);
+      // console.log(this.reps[this.current_rep].bitrate / 8);
+      // console.log(sec);
+      return this.template.frags <= this.current_frag_number;
+    }
+  }, {
+    key: 'getNextUrl',
+    value: function getNextUrl() {
+      var id = this.reps[this.current_rep].id;
+      if (this.current_frag_number === undefined) {
+        this.current_frag_number = 0;
+        return this.config.getBaseUrl() + this.template.init.replace(/\$RepresentationID\$/g, id);
+      }
+      return this.config.getBaseUrl() + this.template.template.replace(/\$RepresentationID\$/g, id).replace(/\$Number\$/g, this.getNextFragNumber());
+    }
+  }, {
+    key: 'getNextFragNumber',
+    value: function getNextFragNumber() {
+      var temp = this.current_frag_number;
+      this.current_frag_number += 1;
+      return this.template.start + temp;
+    }
+  }, {
+    key: 'getMime',
+    value: function getMime() {
+      return this.mime + '; codecs="' + this.reps[this.current_rep].codecs + '"';
+    }
+  }, {
+    key: 'ajaxBuffer',
+    value: function ajaxBuffer(callback) {
+      var url = this.getNextUrl();
+      console.log(url);
+      var xhrequest = new XMLHttpRequest();
+      xhrequest.open("GET", url);
+      xhrequest.responseType = "arraybuffer";
+      xhrequest.onreadystatechange = function () {
+        if (xhrequest.readyState === 4) {
+          if (xhrequest.status === 200) {
+            callback(new Uint8Array(xhrequest.response));
+          }
+        }
+      };
+      xhrequest.send();
+    }
+  }]);
+
+  return MediaLoader;
+}();
+
+exports.default = MediaLoader;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Parser = function () {
+  function Parser(url, data) {
+    _classCallCheck(this, Parser);
+
+    this.xml = (0, _jquery2.default)(data);
+    this.url = url;
+  }
+
+  _createClass(Parser, [{
+    key: 'getType',
+    value: function getType() {
+      if (!this.type) {
+        this.type = this.xml.find('MPD').attr('type');
+      }
+      return this.type;
+    }
+  }, {
+    key: 'getBaseUrl',
+    value: function getBaseUrl() {
+      if (!this.base_url) {
+        var base = this.xml.find('BaseURL').val();
+        if (base.startsWith('./')) {
+          this.base_url = this.url.substr(0, this.url.lastIndexOf('/') + 1) + base.substr(2);
+        } else if (base.startsWith('http://') || base.startsWith('https://')) {
+          this.base_url = base;
+        } else {
+          this.base_url = this.url.substr(0, this.url.lastIndexOf('/') + 1) + base;
+        }
+      }
+      return this.base_url;
+    }
+  }, {
+    key: 'getMime',
+    value: function getMime(contentType) {
+      var dom = this.xml.find('AdaptationSet[contentType=' + contentType + ']');
+      return dom.attr('mimeType');
+    }
+  }, {
+    key: 'getRepresentation',
+    value: function getRepresentation(contentType) {
+      var dom = this.xml.find('AdaptationSet[contentType=' + contentType + ']');
+      var reps = dom.find('Representation');
+      var result = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = reps[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var d = _step.value;
+
+          result.push({
+            id: (0, _jquery2.default)(d).attr('id'),
+            codecs: (0, _jquery2.default)(d).attr('codecs'),
+            bitrate: parseInt((0, _jquery2.default)(d).attr('bandwidth'))
+          });
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      result.sort(function (x, y) {
+        return x.bitrate - y.bitrate;
+      });
+      return result;
+    }
+  }, {
+    key: 'getTemplate',
+    value: function getTemplate(contentType) {
+      var total_time = parseFloat(/([0-9]*[.])?[0-9]+/.exec((0, _jquery2.default)(this.xml.find('MPD')[0]).attr('mediaPresentationDuration')));
+      var dom = this.xml.find('AdaptationSet[contentType=' + contentType + ']');
+      var reps = dom.find('SegmentTemplate');
+      var duration = parseInt(reps.attr('duration'));
+      if (reps.attr('timescale')) {
+        duration = duration / parseInt(reps.attr('timescale'));
+      }
+      var frags = Math.trunc(total_time / duration);
+      if (total_time % duration !== 0) {
+        frags += 1;
+      }
+      // console.log(frags);
+      return {
+        duration: duration,
+        frags: frags,
+        template: reps.attr('media'),
+        start: parseInt(reps.attr('startNumber')),
+        init: reps.attr('initialization')
+      };
+    }
+  }]);
+
+  return Parser;
+}();
+
+exports.default = Parser;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _Parser = __webpack_require__(4);
+
+var _Parser2 = _interopRequireDefault(_Parser);
+
+var _MediaHandler = __webpack_require__(2);
+
+var _MediaHandler2 = _interopRequireDefault(_MediaHandler);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var mdash = function () {
+  function mdash(url, selector, callback) {
+    _classCallCheck(this, mdash);
+
+    this.url = url;
+    this.selector = selector;
+
+    var start = function start(data) {
+      this.config = new _Parser2.default(this.url, data);
+      console.log('MPD Loaded');
+      this.init();
+      if (callback) {
+        callback();
+      }
+    };
+
+    _jquery2.default.ajax({
+      url: this.url,
+      type: 'GET'
+    }).done(start.bind(this)).fail(function () {
+      console.log('cannot load MPD');
+    });
+  }
+
+  _createClass(mdash, [{
+    key: 'init',
+    value: function init() {
+      this.mediaHandler = new _MediaHandler2.default(this.config, this.selector);
+    }
+  }, {
+    key: 'toggleVolume',
+    value: function toggleVolume() {
+      this.mediaHandler.toggleVolume();
+    }
+  }, {
+    key: 'changeVideoQuality',
+    value: function changeVideoQuality(index) {
+      var vm = this;
+      return function () {
+        vm.mediaHandler.changeVideoQuality(index);
+      };
+    }
+  }, {
+    key: 'getVideoRep',
+    value: function getVideoRep() {
+      return this.config.getRepresentation('video');
+    }
+  }]);
+
+  return mdash;
+}();
+
+exports.default = mdash;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(1);
 
 
 /***/ })
